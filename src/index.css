@@ -1,0 +1,30 @@
+@import "tailwindcss";
+@import "@fontsource-variable/instrument-sans";
+
+@theme {
+  --color-foreground: #212529;
+  --color-background: #f5f6f7;
+  --color-card: #ffffff;
+  --color-border: #dee2e6;
+  --color-muted: #868e96;
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-foreground);
+  background-color: var(--color-background);
+  letter-spacing: -0.011em;
+  background-image: radial-gradient(
+    circle,
+    #c0c5cb 0.7px,
+    transparent 0.7px
+  );
+  background-size: 24px 24px;
+}
