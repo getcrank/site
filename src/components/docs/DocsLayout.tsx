@@ -6,7 +6,7 @@ import { DocsMobileNav } from "./DocsMobileNav";
 
 export function DocsLayout() {
   return (
-    <div className="min-h-screen max-w-4xl mx-auto">
+    <div className="min-h-screen max-w-5xl mx-auto">
       <nav className="flex items-center justify-between px-6 py-4 border-b border-border">
         <Link to="/" className="flex items-center gap-3">
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-foreground">
