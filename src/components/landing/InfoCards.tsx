@@ -1,13 +1,13 @@
-import { motion } from "motion/react";
 import { Shield, FlaskConical, type LucideIcon } from "lucide-react";
+import { Card, CardIcon, CardTitle, CardDescription } from "../ui/Card";
 
 interface InfoItem {
-  icon: LucideIcon;
-  title: string;
-  description: string;
+  readonly icon: LucideIcon;
+  readonly title: string;
+  readonly description: string;
 }
 
-const items: InfoItem[] = [
+const items: readonly InfoItem[] = [
   {
     icon: Shield,
     title: "Validation & Redaction",
@@ -34,18 +34,14 @@ export function InfoCards() {
   );
 }
 
-function InfoCard({ icon: Icon, title, description }: InfoItem) {
+function InfoCard({ icon, title, description }: InfoItem) {
   return (
-    <motion.div
-      className="bg-card border border-border rounded-xl p-6 text-left cursor-default"
-      whileHover={{ y: -3 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-    >
-      <div className="flex items-center justify-center w-10 h-10 rounded-lg border border-border mb-4">
-        <Icon className="w-5 h-5 text-foreground" strokeWidth={1.5} />
+    <Card className="p-6">
+      <div className="mb-4">
+        <CardIcon icon={icon} />
       </div>
-      <h3 className="text-sm font-semibold mb-1.5">{title}</h3>
-      <p className="text-sm text-muted leading-relaxed">{description}</p>
-    </motion.div>
+      <CardTitle>{title}</CardTitle>
+      <CardDescription>{description}</CardDescription>
+    </Card>
   );
 }

@@ -1,14 +1,14 @@
-import { motion } from "motion/react";
 import { Layers, RotateCcw, Activity, type LucideIcon } from "lucide-react";
+import { Card, CardIcon, CardTitle, CardDescription } from "../ui/Card";
 
 interface Feature {
-  number: string;
-  icon: LucideIcon;
-  title: string;
-  description: string;
+  readonly number: string;
+  readonly icon: LucideIcon;
+  readonly title: string;
+  readonly description: string;
 }
 
-const features: Feature[] = [
+const features: readonly Feature[] = [
   {
     number: "01",
     icon: Layers,
@@ -44,21 +44,17 @@ export function FeatureCards() {
   );
 }
 
-function FeatureCard({ number, icon: Icon, title, description }: Feature) {
+function FeatureCard({ number, icon, title, description }: Feature) {
   return (
-    <motion.div
-      className="relative bg-card border border-border rounded-xl p-6 text-left cursor-default"
-      whileHover={{ y: -4, rotate: -0.5 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-    >
+    <Card className="relative p-6" hover="lift-rotate">
       <span className="absolute top-5 right-5 text-3xl font-semibold text-foreground/[0.06] select-none">
         {number}
       </span>
-      <div className="flex items-center justify-center w-10 h-10 rounded-lg border border-border mb-4">
-        <Icon className="w-5 h-5 text-foreground" strokeWidth={1.5} />
+      <div className="mb-4">
+        <CardIcon icon={icon} />
       </div>
-      <h3 className="text-sm font-semibold mb-1.5">{title}</h3>
-      <p className="text-sm text-muted leading-relaxed">{description}</p>
-    </motion.div>
+      <CardTitle>{title}</CardTitle>
+      <CardDescription>{description}</CardDescription>
+    </Card>
   );
 }

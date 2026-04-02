@@ -1,4 +1,5 @@
 import { motion } from "motion/react";
+import { scrollReveal } from "../../lib/motion";
 
 const code = `engine, client, err := crank.New("redis://localhost:6379/0",
     crank.WithConcurrency(10),
@@ -17,10 +18,7 @@ export function CodeExample() {
     <section className="px-6 mt-4">
       <motion.div
         className="bg-card border border-border rounded-xl overflow-hidden text-left"
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-40px" }}
-        transition={{ duration: 0.4 }}
+        {...scrollReveal}
       >
         <div className="flex items-center gap-2 px-5 py-3 border-b border-border">
           <div className="w-2.5 h-2.5 rounded-full bg-border" />

@@ -1,14 +1,11 @@
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
+import { fadeInUp, fadeIn } from "../../lib/motion";
 
 export function Hero() {
   return (
     <section className="px-6 pt-20 pb-16 text-center">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <motion.div {...fadeInUp}>
         <p className="text-xs font-medium uppercase tracking-widest text-muted mb-4">
           Open Source SDK
         </p>
@@ -26,9 +23,7 @@ export function Hero() {
 
       <motion.div
         className="mt-8 flex items-center justify-center gap-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.4 }}
+        {...fadeIn(0.3)}
       >
         <a
           href="https://github.com/ogwurujohnson/crank"

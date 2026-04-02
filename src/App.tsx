@@ -1,11 +1,11 @@
-import { Navbar } from "./components/Navbar";
-import { Hero } from "./components/Hero";
-import { Divider } from "./components/Divider";
-import { FeatureCards } from "./components/FeatureCards";
-import { InfoCards } from "./components/InfoCards";
-import { TeaserCard } from "./components/TeaserCard";
-import { CodeExample } from "./components/CodeExample";
-import { Footer } from "./components/Footer";
+import { Navbar } from "./components/ui/Navbar";
+import { Hero } from "./components/landing/Hero";
+import { Divider } from "./components/ui/Divider";
+import { FeatureCards } from "./components/landing/FeatureCards";
+import { InfoCards } from "./components/landing/InfoCards";
+import { TeaserCard } from "./components/landing/TeaserCard";
+import { CodeExample } from "./components/landing/CodeExample";
+import { Footer } from "./components/ui/Footer";
 
 function App() {
   return (
