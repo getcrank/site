@@ -1,24 +1,19 @@
-import { Navbar } from "./components/ui/Navbar";
-import { Hero } from "./components/landing/Hero";
-import { Divider } from "./components/ui/Divider";
-import { FeatureCards } from "./components/landing/FeatureCards";
-import { InfoCards } from "./components/landing/InfoCards";
-import { TeaserCard } from "./components/landing/TeaserCard";
-import { CodeExample } from "./components/landing/CodeExample";
-import { Footer } from "./components/ui/Footer";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { LandingPage } from "./components/landing/LandingPage";
+import { DocsLayout } from "./components/docs/DocsLayout";
+import { DocsContent } from "./components/docs/DocsContent";
 
 function App() {
   return (
-    <div className="min-h-screen max-w-3xl mx-auto">
-      <Navbar />
-      <Hero />
-      <CodeExample />
-      <Divider label="How it works" />
-      <FeatureCards />
-      <InfoCards />
-      <TeaserCard />
-      <Footer />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/docs" element={<DocsLayout />}>
+          <Route index element={<Navigate to="/docs/getting-started" replace />} />
+          <Route path=":slug" element={<DocsContent />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

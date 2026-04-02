@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { fadeInUp, fadeIn } from "../../lib/motion";
 
 export function Hero() {
@@ -25,15 +26,13 @@ export function Hero() {
         className="mt-8 flex items-center justify-center gap-4"
         {...fadeIn(0.3)}
       >
-        <a
-          href="https://github.com/ogwurujohnson/crank"
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          to="/docs"
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-foreground text-background text-sm font-medium rounded-xl hover:opacity-90 transition-opacity"
         >
           Get Started
           <ArrowRight className="w-3.5 h-3.5" />
-        </a>
+        </Link>
         <code className="px-4 py-2.5 bg-card border border-border rounded-xl text-sm text-muted font-mono">
           go get github.com/ogwurujohnson/crank
         </code>

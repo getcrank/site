@@ -28,3 +28,137 @@ body {
   );
   background-size: 24px 24px;
 }
+
+/* Docs prose styling */
+.docs-prose h1 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.docs-prose h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.docs-prose h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.docs-prose p {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--color-muted);
+  margin-bottom: 1rem;
+}
+
+.docs-prose ul,
+.docs-prose ol {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--color-muted);
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.docs-prose ul {
+  list-style-type: disc;
+}
+
+.docs-prose ol {
+  list-style-type: decimal;
+}
+
+.docs-prose li {
+  margin-bottom: 0.25rem;
+}
+
+.docs-prose strong {
+  color: var(--color-foreground);
+  font-weight: 600;
+}
+
+.docs-prose code {
+  font-size: 0.8125rem;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  padding: 0.125rem 0.375rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+}
+
+.docs-prose pre {
+  background-color: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+.docs-prose pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--color-foreground);
+}
+
+.docs-prose a {
+  color: var(--color-foreground);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.docs-prose a:hover {
+  color: var(--color-muted);
+}
+
+.docs-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.docs-prose th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-foreground);
+  padding: 0.625rem 0.75rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.docs-prose td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.docs-prose td code {
+  font-size: 0.8125rem;
+}
+
+.docs-prose tr:last-child td {
+  border-bottom: none;
+}
+
+.docs-prose blockquote {
+  border-left: 3px solid var(--color-border);
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+  color: var(--color-muted);
+  font-style: italic;
+}
