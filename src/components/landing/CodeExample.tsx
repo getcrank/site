@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { scrollReveal } from "../../lib/motion";
 
 const code = `engine, client, err := crank.New("redis://localhost:6379/0",
+    crank.withBroker('redis'),
     crank.WithConcurrency(10),
     crank.WithQueues(crank.QueueOption{Name: "critical", Weight: 5}),
 )

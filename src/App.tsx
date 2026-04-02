@@ -4,6 +4,7 @@ import { Divider } from "./components/ui/Divider";
 import { FeatureCards } from "./components/landing/FeatureCards";
 import { InfoCards } from "./components/landing/InfoCards";
 import { TeaserCard } from "./components/landing/TeaserCard";
+import { BrokerCard } from "./components/landing/BrokerCard";
 import { CodeExample } from "./components/landing/CodeExample";
 import { Footer } from "./components/ui/Footer";
 
@@ -17,6 +18,7 @@ function App() {
       <FeatureCards />
       <InfoCards />
       <TeaserCard />
+      <BrokerCard />
       <Footer />
     </div>
   );
