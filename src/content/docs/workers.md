@@ -68,6 +68,7 @@ Control how many jobs are processed simultaneously:
 
 ```go
 engine, client, err := crank.New("redis://localhost:6379/0",
+    crank.WithBroker("redis"),
     crank.WithConcurrency(20),
 )
 ```
@@ -80,6 +81,7 @@ Set a per-job execution timeout:
 
 ```go
 engine, client, err := crank.New("redis://localhost:6379/0",
+    crank.WithBroker("redis"),
     crank.WithTimeout(15 * time.Second),
 )
 ```

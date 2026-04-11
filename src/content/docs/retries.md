@@ -32,6 +32,7 @@ The engine periodically checks the retry set for jobs that are ready to be re-en
 
 ```go
 engine, client, err := crank.New("redis://localhost:6379/0",
+    crank.WithBroker("redis"),
     crank.WithRetryPollInterval(10 * time.Second),
 )
 ```

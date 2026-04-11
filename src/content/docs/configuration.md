@@ -8,6 +8,7 @@ Pass options to `crank.New()`:
 
 ```go
 engine, client, err := crank.New("redis://localhost:6379/0",
+    crank.WithBroker("redis"),
     crank.WithConcurrency(20),
     crank.WithTimeout(15 * time.Second),
     crank.WithQueues(
@@ -23,15 +24,18 @@ engine, client, err := crank.New("redis://localhost:6379/0",
 
 | Option | Default | Description |
 |--------|---------|-------------|
+| `WithBroker(kind)` | **required** | Broker type: `"redis"`, `"nats"`, `"pgsql"` |
+| `WithCustomBroker(b)` | — | Use a custom `Broker` implementation |
 | `WithConcurrency(n)` | 10 | Number of worker goroutines (max 10000) |
 | `WithTimeout(d)` | 8s | Per-job execution timeout |
 | `WithQueues(qs...)` | `default:1` | Queue names and weights |
 | `WithRetryPollInterval(d)` | 5s | How often to check the retry set |
-| `WithLogger(l)` | built-in | Custom logger implementation |
-| `WithBroker(kind)` | inferred from URL | Broker type: `"redis"` |
+| `WithLogger(l)` | noop | Custom logger implementation |
 | `WithRedisTimeout(d)` | 5s | Redis connection timeout |
 | `WithTLS(bool)` | false | Enable TLS for Redis |
 | `WithTLSInsecureSkipVerify(bool)` | false | Skip TLS cert verification |
+
+Either `WithBroker` or `WithCustomBroker` must be provided. Omitting both returns an error.
 
 ## YAML Configuration with QuickStart
 
@@ -88,7 +92,7 @@ redis:
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `broker` | string | `redis` | Backend to use |
+| `broker` | string | **required** | Backend to use (`redis`, `nats`, `pgsql`) |
 | `broker_url` | string | — | Fallback URL when backend URL is empty |
 | `concurrency` | int | 10 | Number of concurrent workers |
 | `timeout` | int | 8 | Per-job timeout in seconds |
@@ -139,6 +143,9 @@ Pass it via options:
 
 ```go
 engine, client, err := crank.New("redis://localhost:6379/0",
+    crank.WithBroker("redis"),
     crank.WithLogger(myLogger),
 )
 ```
+
+When a logger is provided, Crank logs job lifecycle events: enqueue, dequeue, processed, failed, and dead queue transitions.

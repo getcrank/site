@@ -17,9 +17,6 @@ nats:
 
 The `NATS_URL` environment variable will be supported as a fallback.
 
-## RabbitMQ Broker
-
-RabbitMQ is planned as a future broker backend. This will give teams using RabbitMQ a native integration without needing to run Redis alongside it.
 
 ## Dead Job Management
 
