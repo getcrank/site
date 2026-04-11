@@ -8,6 +8,7 @@ Pass queue options when creating the engine:
 
 ```go
 engine, client, err := crank.New("redis://localhost:6379/0",
+    crank.WithBroker("redis"),
     crank.WithQueues(
         crank.QueueOption{Name: "critical", Weight: 5},
         crank.QueueOption{Name: "default", Weight: 3},

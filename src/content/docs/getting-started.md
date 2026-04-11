@@ -36,6 +36,7 @@ func (w EmailWorker) Perform(ctx context.Context, args ...interface{}) error {
 
 func main() {
     engine, client, err := crank.New("redis://localhost:6379/0",
+        crank.WithBroker("redis"),
         crank.WithConcurrency(10),
         crank.WithQueues(crank.QueueOption{Name: "default", Weight: 1}),
     )

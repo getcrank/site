@@ -10,7 +10,7 @@ export function BrokerCard() {
           <CardTitle>Bring Your Own Broker</CardTitle>
           <CardDescription>
             Implement your own broker interface to back Crank with any transport
-            you need. Redis is supported natively out of the box, NATS support is
+            you need with WithCustomBroker(). Redis is supported natively out of the box, NATS support is
             in progress, and more brokers are on the way.
           </CardDescription>
         </div>

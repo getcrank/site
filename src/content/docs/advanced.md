@@ -186,6 +186,22 @@ fmt.Printf("Queue sizes: %v\n", stats.Queues)
 
 ---
 
+## Lifecycle Logging
+
+When a logger is provided via `WithLogger()`, Crank logs structured events at each stage of a job's lifecycle:
+
+| Event | Level | Fields | When |
+|-------|-------|--------|------|
+| `job enqueued` | Info | jid, class, queue | Job pushed to broker |
+| `job dequeued` | Info | jid, class, queue | Job fetched by processor |
+| `job processed` | Info | jid, class, queue, dur | Worker returned nil |
+| `job failed` | Error | jid, class, queue, err, dur | Worker returned error |
+| `job exceeded max retries, moving to dead queue` | Warn | jid, class, queue, retries | Retries exhausted |
+
+All fields use structured key-value pairs compatible with `slog` and similar loggers. See [Configuration](/docs/configuration) for the `Logger` interface.
+
+---
+
 ## Error Handling Patterns
 
 - **Errors are returned, not panicked** — validators, redactors, and broker operations return errors; the engine converts them into job-level failures with retries and dead-lettering.
