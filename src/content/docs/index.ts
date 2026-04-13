@@ -1,4 +1,5 @@
 import gettingStarted from "./getting-started.md?raw";
+import sidekiqToCrank from "./sidekiq-to-crank.md?raw";
 import configuration from "./configuration.md?raw";
 import queues from "./queues.md?raw";
 import workers from "./workers.md?raw";
@@ -25,6 +26,7 @@ export const docSections: readonly DocSection[] = [
     label: "Introduction",
     pages: [
       { slug: "getting-started", title: "Getting Started", content: gettingStarted },
+      { slug: "sidekiq-to-crank", title: "Sidekiq to Crank", content: sidekiqToCrank },
       { slug: "configuration", title: "Configuration", content: configuration },
     ],
   },
