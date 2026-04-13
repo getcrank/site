@@ -13,6 +13,11 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: rgba(33, 37, 41, 0.12);
 }
 
 body {

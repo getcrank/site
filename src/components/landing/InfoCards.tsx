@@ -1,4 +1,5 @@
 import { Shield, FlaskConical, type LucideIcon } from "lucide-react";
+import { motion } from "motion/react";
 import { Card, CardIcon, CardTitle, CardDescription } from "../ui/Card";
 
 interface InfoItem {
@@ -26,22 +27,34 @@ export function InfoCards() {
   return (
     <section className="px-6 mt-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {items.map((item) => (
-          <InfoCard key={item.title} {...item} />
+        {items.map((item, index) => (
+          <InfoCard key={item.title} {...item} index={index} />
         ))}
       </div>
     </section>
   );
 }
 
-function InfoCard({ icon, title, description }: InfoItem) {
+function InfoCard({
+  icon,
+  title,
+  description,
+  index,
+}: InfoItem & { readonly index: number }) {
   return (
-    <Card className="p-6">
-      <div className="mb-4">
-        <CardIcon icon={icon} />
-      </div>
-      <CardTitle>{title}</CardTitle>
-      <CardDescription>{description}</CardDescription>
-    </Card>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+    >
+      <Card className="p-6">
+        <div className="mb-4">
+          <CardIcon icon={icon} />
+        </div>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </Card>
+    </motion.div>
   );
 }

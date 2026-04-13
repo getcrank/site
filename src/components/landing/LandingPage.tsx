@@ -10,7 +10,7 @@ import { Footer } from "../ui/Footer";
 
 export function LandingPage() {
   return (
-    <div className="min-h-screen max-w-4xl mx-auto">
+    <div className="min-h-screen max-w-5xl mx-auto">
       <Navbar />
       <Hero />
       <CodeExample />

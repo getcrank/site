@@ -1,4 +1,5 @@
 import { Link, Outlet } from "react-router-dom";
+import { motion } from "motion/react";
 import { Terminal } from "lucide-react";
 import { GithubIcon } from "../ui/GithubIcon";
 import { DocsSidebar } from "./DocsSidebar";
@@ -6,12 +7,17 @@ import { DocsMobileNav } from "./DocsMobileNav";
 
 export function DocsLayout() {
   return (
-    <div className="min-h-screen max-w-5xl mx-auto">
+    <div className="min-h-screen max-w-6xl mx-auto">
       <nav className="flex items-center justify-between px-6 py-4 border-b border-border">
         <Link to="/" className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-foreground">
+          <motion.div
+            className="flex items-center justify-center w-8 h-8 rounded-lg bg-foreground"
+            whileHover={{ scale: 1.08, rotate: -3 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 15 }}
+          >
             <Terminal className="w-4 h-4 text-background" strokeWidth={2.5} />
-          </div>
+          </motion.div>
           <span className="text-base font-semibold tracking-tight">Crank</span>
         </Link>
         <div className="flex items-center gap-4">

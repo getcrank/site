@@ -17,10 +17,10 @@ export function DocsSidebar() {
                 <li key={page.slug}>
                   <Link
                     to={`/docs/${page.slug}`}
-                    className={`block text-sm py-1 transition-colors ${
+                    className={`block text-sm py-1.5 pl-3 border-l-[1.5px] transition-colors ${
                       slug === page.slug
-                        ? "text-foreground font-medium"
-                        : "text-muted hover:text-foreground"
+                        ? "text-foreground font-medium border-foreground"
+                        : "text-muted hover:text-foreground border-transparent"
                     }`}
                   >
                     {page.title}

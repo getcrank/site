@@ -10,7 +10,9 @@ interface CardProps {
 
 export function Card({ children, className = "", hover = "lift" }: CardProps) {
   const hoverAnimation =
-    hover === "lift-rotate" ? { y: -4, rotate: -0.5 } : { y: -3 };
+    hover === "lift-rotate"
+      ? { y: -4, rotate: -0.5, boxShadow: "0 8px 24px -8px rgba(33,37,41,0.08)" }
+      : { y: -3, boxShadow: "0 6px 20px -6px rgba(33,37,41,0.06)" };
 
   return (
     <motion.div
