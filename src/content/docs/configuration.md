@@ -93,7 +93,6 @@ redis:
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
 | `broker` | string | **required** | Backend to use (`redis`, `nats`, `pgsql`) |
-| `broker_url` | string | — | Fallback URL when backend URL is empty |
 | `concurrency` | int | 10 | Number of concurrent workers |
 | `timeout` | int | 8 | Per-job timeout in seconds |
 | `queues` | list | `default:1` | Queue definitions |
@@ -125,6 +124,16 @@ When `redis.url` is empty in the YAML config, Crank falls back to the `REDIS_URL
 ```bash
 export REDIS_URL=redis://my-host:6379/0
 ```
+
+If both `redis.url` and `REDIS_URL` are empty, Crank returns an error:
+
+```
+config: broker is "redis" but redis.url (or REDIS_URL env) is empty
+```
+
+The same pattern applies to NATS (`nats.url` → `NATS_URL` env → error).
+
+See [Error Reference](/docs/error-reference) for a complete list of errors and how to resolve them.
 
 ## Custom Logger
 

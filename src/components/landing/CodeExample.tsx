@@ -12,7 +12,7 @@ engine.Register("EmailWorker", EmailWorker{})
 engine.Start()
 
 // Enqueue from anywhere
-crank.Enqueue("EmailWorker", "critical", "user-123")`;
+crank.Enqueue(ctx, "EmailWorker", "critical", "user-123")`;
 
 export function CodeExample() {
   return (

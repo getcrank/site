@@ -53,7 +53,7 @@ func main() {
     defer engine.Stop()
 
     // Enqueue a job
-    jid, err := client.Enqueue("EmailWorker", "default", "user-123")
+    jid, err := client.Enqueue(context.Background(), "EmailWorker", "default", "user-123")
     if err != nil {
         log.Printf("enqueue failed: %v", err)
     }
@@ -89,13 +89,13 @@ See [Configuration](/docs/configuration) for the full YAML format.
 You can enqueue jobs directly using the client returned from `crank.New()`:
 
 ```go
-jid, err := client.Enqueue("EmailWorker", "default", "user-123")
+jid, err := client.Enqueue(context.Background(), "EmailWorker", "default", "user-123")
 ```
 
 Or, if you've called `crank.SetGlobalClient(client)` (which `QuickStart` does automatically), you can enqueue from anywhere without passing the client around:
 
 ```go
-jid, err := crank.Enqueue("EmailWorker", "default", "user-123")
+jid, err := crank.Enqueue(context.Background(), "EmailWorker", "default", "user-123")
 ```
 
 Both return a job ID (string) and an error. Jobs are serialized and pushed to the broker for processing by the next available worker.

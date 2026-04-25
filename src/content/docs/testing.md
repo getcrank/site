@@ -35,7 +35,7 @@ func TestEmailWorker(t *testing.T) {
 
     engine.Register("EmailWorker", EmailWorker{})
 
-    jid, err := client.Enqueue("EmailWorker", "default", "user-123")
+    jid, err := client.Enqueue(context.Background(), "EmailWorker", "default", "user-123")
     if err != nil {
         t.Fatalf("enqueue failed: %v", err)
     }
@@ -69,6 +69,7 @@ For aggregate statistics, use `engine.Stats()`:
 ```go
 stats, err := engine.Stats()
 fmt.Printf("Processed: %d\n", stats.Processed)
+fmt.Printf("Failed: %d\n", stats.Failed)
 fmt.Printf("Retry: %d\n", stats.Retry)
 fmt.Printf("Dead: %d\n", stats.Dead)
 fmt.Printf("Queue sizes: %v\n", stats.Queues)

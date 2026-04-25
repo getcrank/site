@@ -34,13 +34,13 @@ Specify the queue name when enqueuing:
 
 ```go
 // High priority
-jid, err := client.Enqueue("PaymentWorker", "critical", paymentID)
+jid, err := client.Enqueue(ctx,"PaymentWorker", "critical", paymentID)
 
 // Normal priority
-jid, err := client.Enqueue("EmailWorker", "default", userID)
+jid, err := client.Enqueue(ctx,"EmailWorker", "default", userID)
 
 // Low priority
-jid, err := client.Enqueue("CleanupWorker", "low", batchID)
+jid, err := client.Enqueue(ctx,"CleanupWorker", "low", batchID)
 ```
 
 ## YAML Configuration

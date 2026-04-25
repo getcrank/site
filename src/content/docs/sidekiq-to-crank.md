@@ -62,10 +62,10 @@ EmailWorker.set(queue: "critical").perform_async("user-123")
 **Crank**
 
 ```go
-jid, err := client.Enqueue("EmailWorker", "default", "user-123")
+jid, err := client.Enqueue(ctx, "EmailWorker", "default", "user-123")
 
 // Or use the global client from anywhere
-jid, err := crank.Enqueue("EmailWorker", "critical", "user-123")
+jid, err := crank.Enqueue(ctx, "EmailWorker", "critical", "user-123")
 ```
 
 > In Crank, the queue name is always passed explicitly at enqueue time.
@@ -151,7 +151,7 @@ end
 ```go
 retries := 10
 opts := &crank.JobOptions{Retry: &retries}
-jid, err := client.EnqueueWithOptions("EmailWorker", "default", opts, "user-123")
+jid, err := client.EnqueueWithOptions(ctx, "EmailWorker", "default", opts, "user-123")
 ```
 
 | | Sidekiq | Crank |
@@ -217,7 +217,7 @@ end
 engine, client, testBroker, err := crank.NewTestEngine()
 engine.Register("EmailWorker", EmailWorker{})
 
-jid, err := client.Enqueue("EmailWorker", "default", "user-123")
+jid, err := client.Enqueue(ctx, "EmailWorker", "default", "user-123")
 engine.Start()
 defer engine.Stop()
 
@@ -243,12 +243,13 @@ deadJobs := testBroker.DeadJobs()
 
 ```yaml
 broker: redis
-redis_url: redis://localhost:6379/0
 concurrency: 10
 queues:
   - [critical, 5]
   - [default, 3]
   - [low, 1]
+redis:
+  url: redis://localhost:6379/0
 ```
 
 ```go
@@ -260,7 +261,7 @@ engine, client, err := crank.QuickStart("config/crank.yml")
 | Concept | Sidekiq (Ruby) | Crank (Go) |
 |---|---|---|
 | Define worker | `include Sidekiq::Job` | Implement `Perform(ctx, args...)` |
-| Enqueue | `Worker.perform_async(args)` | `client.Enqueue(name, queue, args)` |
+| Enqueue | `Worker.perform_async(args)` | `client.Enqueue(ctx, name, queue, args)` |
 | Queues | `sidekiq_options queue: :name` | `crank.WithQueues(...)` |
 | Retries | `sidekiq_options retry: N` | `&crank.JobOptions{Retry: &n}` |
 | Middleware | `chain.add MyMiddleware` | `engine.Use(myMiddleware)` |
