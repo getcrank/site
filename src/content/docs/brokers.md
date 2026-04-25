@@ -42,15 +42,18 @@ You can provide your own broker implementation via `WithCustomBroker()`. Impleme
 
 ```go
 type Broker interface {
-    Enqueue(queue string, job *Job) error
+    Enqueue(ctx context.Context, queue string, job *Job) error
     Dequeue(queues []string, timeout time.Duration) (*Job, string, error)
+    Ack(job *Job) error
+    ReapOrphanedJobs(lease time.Duration) ([]*Job, error)
     AddToRetry(job *Job, retryAt time.Time) error
     GetRetryJobs(limit int64) ([]*Job, error)
     RemoveFromRetry(job *Job) error
     AddToDead(job *Job) error
-    GetDeadJobs(limit int64) ([]*Job, error)
     GetQueueSize(queue string) (int64, error)
     DeleteKey(key string) error
+    RecordSuccess(job *Job) error
+    RecordFailure(job *Job) error
     GetStats() (map[string]interface{}, error)
     Close() error
 }

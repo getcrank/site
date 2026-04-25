@@ -179,6 +179,7 @@ Use `engine.Stats()` for aggregate statistics:
 ```go
 stats, err := engine.Stats()
 fmt.Printf("Processed: %d\n", stats.Processed)
+fmt.Printf("Failed: %d\n", stats.Failed)
 fmt.Printf("Retry: %d\n", stats.Retry)
 fmt.Printf("Dead: %d\n", stats.Dead)
 fmt.Printf("Queue sizes: %v\n", stats.Queues)

@@ -13,7 +13,7 @@ Override the retry count when enqueuing with `EnqueueWithOptions`:
 ```go
 retries := 10
 opts := &crank.JobOptions{Retry: &retries}
-jid, err := client.EnqueueWithOptions("ReportWorker", "default", opts, 2024, "q1")
+jid, err := client.EnqueueWithOptions(ctx, "ReportWorker", "default", opts, 2024, "q1")
 ```
 
 ## Backoff Strategy
@@ -45,9 +45,10 @@ Jobs that fail after exhausting all retries are moved to the dead set. You can i
 
 ```go
 stats, err := engine.Stats()
-fmt.Printf("Dead jobs: %d\n", stats.Dead)
-fmt.Printf("Retry jobs: %d\n", stats.Retry)
 fmt.Printf("Processed: %d\n", stats.Processed)
+fmt.Printf("Failed: %d\n", stats.Failed)
+fmt.Printf("Retry jobs: %d\n", stats.Retry)
+fmt.Printf("Dead jobs: %d\n", stats.Dead)
 ```
 
 In tests, use `TestBroker` to inspect dead and retry jobs directly:

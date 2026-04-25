@@ -59,12 +59,12 @@ engine.RegisterMany(map[string]crank.Worker{
 EmailWorker
   .set(queue: "critical")
   .perform_async("user-123")`,
-    go: `client.Enqueue(
+    go: `client.Enqueue(ctx,
     "EmailWorker", "default", "user-123",
 )
 
 // Global client \u2014 enqueue from anywhere
-crank.Enqueue(
+crank.Enqueue(ctx,
     "EmailWorker", "critical", "user-123",
 )`,
     insight:
@@ -96,7 +96,7 @@ end
 # Backoff: polynomial + random jitter`,
     go: `retries := 10
 opts := &crank.JobOptions{Retry: &retries}
-client.EnqueueWithOptions(
+client.EnqueueWithOptions(ctx,
     "EmailWorker", "default", opts, "user-123",
 )
 // Default: 5 retries (max 25)
@@ -147,7 +147,7 @@ end`,
     go: `engine, client, tb, _ := crank.NewTestEngine()
 engine.Register("EmailWorker", EmailWorker{})
 
-client.Enqueue("EmailWorker", "default", "user-123")
+client.Enqueue(context.Background(), "EmailWorker", "default", "user-123")
 engine.Start()
 defer engine.Stop()
 
@@ -165,12 +165,13 @@ dead := tb.DeadJobs()`,
   - [low, 1]`,
     go: `# config/crank.yml
 broker: redis
-redis_url: redis://localhost:6379/0
 concurrency: 10
 queues:
   - [critical, 5]
   - [default, 3]
-  - [low, 1]`,
+  - [low, 1]
+redis:
+  url: redis://localhost:6379/0`,
     insight:
       'Load with crank.QuickStart("config/crank.yml") \u2014 sets up engine, client, and global client in one call.',
   },
@@ -191,7 +192,7 @@ const quickRef: readonly QuickRefRow[] = [
   {
     concept: "Enqueue job",
     sidekiq: "Worker.perform_async(args)",
-    crank: "client.Enqueue(name, queue, args)",
+    crank: "client.Enqueue(ctx, name, queue, args)",
   },
   {
     concept: "Queue routing",
