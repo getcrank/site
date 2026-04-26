@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router";
 import { motion } from "motion/react";
 import { Terminal } from "lucide-react";
 import { GithubIcon } from "../ui/GithubIcon";

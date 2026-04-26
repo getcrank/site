@@ -13,8 +13,8 @@ type Middleware func(next Handler) Handler
 
 These are already wired into the engine's chain:
 
-- **RecoveryMiddleware** — catches panics in workers, logs the stack trace, and converts them to errors
-- **LoggingMiddleware** — logs failed jobs with redacted args (see [Advanced](/docs/advanced))
+- **RecoveryMiddleware** — catches panics in workers and converts them to errors. Stack traces are capped at 4KB and the raw panic value is excluded from the error to prevent leaking sensitive data from the call stack.
+- **LoggingMiddleware** — logs failed jobs with redacted args using the engine-scoped or global redactor (see [Advanced](/docs/advanced))
 - **BreakerMiddleware** — records success/failure per job class for the circuit breaker
 
 ## Adding Custom Middleware

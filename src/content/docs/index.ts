@@ -1,5 +1,4 @@
 import gettingStarted from "./getting-started.md?raw";
-import sidekiqToCrank from "./sidekiq-to-crank.md?raw";
 import configuration from "./configuration.md?raw";
 import queues from "./queues.md?raw";
 import workers from "./workers.md?raw";
@@ -8,16 +7,15 @@ import retries from "./retries.md?raw";
 import brokers from "./brokers.md?raw";
 import testing from "./testing.md?raw";
 import advanced from "./advanced.md?raw";
-import errorReference from "./error-reference.md?raw";
 import comingFeatures from "./coming-features.md?raw";
 
-export interface DocPage {
+interface DocPage {
   readonly slug: string;
   readonly title: string;
   readonly content: string;
 }
 
-export interface DocSection {
+interface DocSection {
   readonly label: string;
   readonly pages: readonly DocPage[];
 }
@@ -27,7 +25,7 @@ export const docSections: readonly DocSection[] = [
     label: "Introduction",
     pages: [
       { slug: "getting-started", title: "Getting Started", content: gettingStarted },
-      { slug: "sidekiq-to-crank", title: "Sidekiq to Crank", content: sidekiqToCrank },
+      { slug: "sidekiq-to-crank", title: "Sidekiq to Crank", content: "" },
       { slug: "configuration", title: "Configuration", content: configuration },
     ],
   },
@@ -46,7 +44,7 @@ export const docSections: readonly DocSection[] = [
       { slug: "brokers", title: "Brokers", content: brokers },
       { slug: "testing", title: "Testing", content: testing },
       { slug: "advanced", title: "Advanced", content: advanced },
-      { slug: "error-reference", title: "Error Reference", content: errorReference },
+      { slug: "error-reference", title: "Error Reference", content: "" },
     ],
   },
   {

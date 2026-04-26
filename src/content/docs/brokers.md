@@ -23,6 +23,10 @@ engine, client, err := crank.New("redis://localhost:6379/0",
 )
 ```
 
+**TLS validation:** When `WithTLS(true)` is set, the URL must use the `redis://` or `rediss://` scheme. Crank will automatically upgrade `redis://` to `rediss://`. If the URL uses a non-standard scheme, Crank returns an error at startup rather than silently connecting without TLS.
+
+**Credential safety:** Passwords embedded in Redis URLs (e.g. `redis://:secret@host:6379`) are automatically redacted in error messages. Internal hostnames and ports are not exposed in connection errors.
+
 ### Redis via YAML
 
 ```yaml
