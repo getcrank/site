@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { ArrowRight } from "lucide-react";
 import { fadeInUp, fadeIn } from "../../lib/motion";
 
@@ -411,7 +411,7 @@ export function SidekiqToCrank() {
         viewport={{ once: true, margin: "-40px" }}
         transition={{ duration: 0.4 }}
       >
-        <p className="text-sm text-muted mb-3">Ready to make the switch?</p>
+        <p className="text-sm text-muted mb-3">Ready to try it out?</p>
         <Link
           to="/docs/getting-started"
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-foreground text-background text-sm font-medium rounded-xl hover:opacity-90 transition-opacity"

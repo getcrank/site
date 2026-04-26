@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 export function Hero() {
   return (
