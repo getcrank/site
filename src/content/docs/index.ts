@@ -7,7 +7,6 @@ import retries from "./retries.md?raw";
 import brokers from "./brokers.md?raw";
 import testing from "./testing.md?raw";
 import advanced from "./advanced.md?raw";
-import errorReference from "./error-reference.md?raw";
 import comingFeatures from "./coming-features.md?raw";
 
 interface DocPage {
@@ -45,7 +44,7 @@ export const docSections: readonly DocSection[] = [
       { slug: "brokers", title: "Brokers", content: brokers },
       { slug: "testing", title: "Testing", content: testing },
       { slug: "advanced", title: "Advanced", content: advanced },
-      { slug: "error-reference", title: "Error Reference", content: errorReference },
+      { slug: "error-reference", title: "Error Reference", content: "" },
     ],
   },
   {

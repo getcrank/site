@@ -4,12 +4,17 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import { allDocPages } from "../../content/docs";
 import { SidekiqToCrank } from "./SidekiqToCrank";
+import { ErrorReference } from "./ErrorReference";
 
 export function DocsContent() {
   const { slug } = useParams();
 
   if (slug === "sidekiq-to-crank") {
     return <SidekiqToCrank />;
+  }
+
+  if (slug === "error-reference") {
+    return <ErrorReference />;
   }
 
   const page = allDocPages.find((p) => p.slug === slug);
