@@ -4,12 +4,15 @@ This covers Crank's advanced features: validation, redaction, circuit breaker, m
 
 ## Validation
 
-Validation enforces constraints on jobs before they are executed. The processor consults the global validator (if set) before worker lookup.
+Validation enforces constraints on jobs at two points: at **enqueue time** (before the job reaches the broker) and at **execution time** (before worker dispatch). Queue names and worker class names are always validated at enqueue time. Custom validators run at both boundaries.
 
 ### Setting a Validator
 
+Validators can be scoped to a single engine or set globally:
+
 ```go
-crank.SetValidator(validator)
+// Engine-scoped (recommended for multi-engine processes)
+engine.SetValidator(validator)
 ```
 
 ### Built-in Validators
@@ -22,8 +25,16 @@ crank.ClassAllowlist(map[string]bool{          // whitelist job classes
 })
 crank.ClassPattern(regexp.MustCompile(`^[A-Za-z]+Worker$`))  // regex pattern
 crank.MaxPayloadSize(1024)                     // max serialized job size in bytes
+crank.MaxMetadataSize(512)                     // max serialized metadata size in bytes
 crank.SafeClassPattern()                       // convenience: ^[A-Za-z0-9_]+$
+crank.ValidateQueueName("my-queue")            // validate queue name format
 ```
+
+`MaxPayloadSize` uses the original broker bytes (`RawPayload`) when available to avoid re-serialization artifacts. `MaxMetadataSize` is a separate check to prevent jobs with small args but oversized metadata from bypassing payload limits.
+
+### Queue Name Validation
+
+Queue names are validated automatically at enqueue time. They must match `[A-Za-z0-9_-]{1,128}`. Invalid names are rejected immediately with a clear error — they never reach the broker.
 
 ### Composing Validators
 
@@ -33,8 +44,10 @@ Use `ChainValidator` to apply multiple validators in sequence:
 validators := crank.ChainValidator{
     crank.MaxArgsCount(5),
     crank.SafeClassPattern(),
+    crank.MaxPayloadSize(4096),
+    crank.MaxMetadataSize(512),
 }
-crank.SetValidator(validators)
+engine.SetValidator(validators)
 ```
 
 The first validator to return an error stops the chain. Validation failures trigger the normal retry/dead-letter path — the job is not dispatched to a worker.
@@ -47,7 +60,14 @@ Redaction controls how job arguments are logged when jobs fail. The logging midd
 
 ### Setting a Redactor
 
+Redactors can be scoped to a single engine or set globally:
+
 ```go
+// Engine-scoped (recommended for multi-engine processes)
+engine.SetRedactor(redactor)
+
+// Process-global (affects all engines without an engine-scoped redactor)
+// Deprecated: prefer engine.SetRedactor for isolation.
 crank.SetRedactor(redactor)
 ```
 
@@ -55,9 +75,11 @@ When `nil` is passed, it reverts to the built-in default (`MaskingRedactor`).
 
 ### Built-in Redactors
 
-- **NoopRedactor** — logs raw args via `fmt.Sprintf`. Use only in trusted environments.
-- **MaskingRedactor** (default) — replaces all args with `[REDACTED xN]`.
-- **FieldMaskingRedactor** — masks specific map keys while leaving others visible.
+- **MaskingRedactor** (default) — replaces all args with `[REDACTED xN]`. Safe for production.
+- **FieldMaskingRedactor** — masks specific map keys while leaving others visible. Non-map arguments are replaced with `[REDACTED non-map arg]` to prevent accidental leakage of bare string secrets.
+- **DebugRedactor** — logs raw args via `fmt.Sprintf`. **Unsafe for production** — exposes all job arguments including passwords, tokens, and PII. Use only for local debugging.
+
+> `NoopRedactor` is a deprecated alias for `DebugRedactor`. Prefer `MaskingRedactor` (default) or `FieldMaskingRedactor` in production.
 
 ### Field-Level Redaction
 
@@ -67,10 +89,10 @@ redactor := crank.NewFieldMaskingRedactor([]string{
     "secret",
     "token",
 })
-crank.SetRedactor(redactor)
+engine.SetRedactor(redactor)
 ```
 
-When a job fails and `LoggingMiddleware` runs, map arguments with matching keys (case-insensitive) will be replaced with `[REDACTED]`.
+When a job fails and `LoggingMiddleware` runs, map arguments with matching keys (case-insensitive) will be replaced with `[REDACTED]`. Non-map arguments (bare strings, numbers) are always replaced with `[REDACTED non-map arg]` regardless of the key list — this prevents secrets passed as plain arguments from leaking through the redactor.
 
 ---
 
@@ -97,6 +119,10 @@ breaker := crank.NewCircuitBreaker(crank.BreakerConfig{
 ```
 
 The circuit breaker is built into the engine — it's wired automatically via `BreakerMiddleware` and consulted by the fetcher.
+
+### Memory Protection
+
+The circuit breaker tracks up to 10,000 unique job classes. When the map reaches capacity, entries are evicted in priority order: closed entries with no failures first, then any closed entry, then the oldest open entry. If the map is completely full with no evictable entries, new classes are denied (treated as open circuits) to prevent unbounded memory growth. The `failureTimes` slice per entry is also capped to prevent per-class memory exhaustion.
 
 ### Inspecting State
 
@@ -206,5 +232,6 @@ All fields use structured key-value pairs compatible with `slog` and similar log
 ## Error Handling Patterns
 
 - **Errors are returned, not panicked** — validators, redactors, and broker operations return errors; the engine converts them into job-level failures with retries and dead-lettering.
-- **Panics are localized** — `RecoveryMiddleware` catches panics in workers and converts them to errors. Metrics handler panics are caught and logged without stopping the engine.
+- **Panics are sanitized** — `RecoveryMiddleware` catches panics in workers and converts them to errors. Stack traces are capped at 4KB to reduce the risk of leaking sensitive in-scope variables. The raw panic value is not included in the returned error or log output to prevent sensitive data from bypassing the redactor.
 - **Circuit breaker containment** — when a job class fails repeatedly, its circuit opens and the fetcher temporarily stops processing jobs of that class, protecting downstream systems while other classes continue.
+- **Credential protection** — Redis URLs containing passwords are automatically redacted in error messages. Internal network topology (hostnames, ports) is not exposed in connection errors.

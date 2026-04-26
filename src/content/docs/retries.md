@@ -39,6 +39,14 @@ engine, client, err := crank.New("redis://localhost:6379/0",
 
 The default interval is `5` seconds.
 
+## Broker Failure During Retry
+
+If the broker itself is unavailable when the retry loop tries to re-enqueue a job, the retry count is incremented on each failed attempt. Once retries are exhausted, the job is moved to the dead set. This prevents infinite retry loops under sustained broker instability.
+
+## Graceful Shutdown
+
+During engine shutdown, any in-flight job that hasn't been dispatched to a worker is re-enqueued immediately. If re-enqueue fails, the job is added to the retry set for pickup on the next startup. In all cases, the job is acknowledged from the processing set to prevent it from being stuck for the full lease duration.
+
 ## Dead Set
 
 Jobs that fail after exhausting all retries are moved to the dead set. You can inspect dead job counts through the engine stats:

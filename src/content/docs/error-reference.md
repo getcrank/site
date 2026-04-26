@@ -96,19 +96,27 @@ These errors occur when the broker can't be reached.
 
 ### `invalid Redis URL`
 
-**Message:** `broker not available: invalid Redis URL: <details>`
+**Message:** `broker not available: invalid Redis URL <redacted-url>: <details>`
 
-**Cause:** The Redis URL can't be parsed. Common issues: missing scheme, typos, invalid port.
+**Cause:** The Redis URL can't be parsed. Common issues: missing scheme, typos, invalid port. Credentials in the URL are automatically redacted in the error message.
 
 **Fix:** Use a valid Redis URL format: `redis://host:port/db` or `rediss://host:port/db` for TLS.
 
 ### `Redis unreachable`
 
-**Message:** `broker not available: Redis unreachable at "redis://host:6379/0": <details>`
+**Message:** `broker not available: Redis unreachable: <details>`
 
-**Cause:** Crank connected to Redis but the PING failed. Redis may be down, the port may be wrong, or authentication may be required.
+**Cause:** Crank connected to Redis but the PING failed. Redis may be down, the port may be wrong, or authentication may be required. The host address is not included in the error message to prevent leaking internal network topology.
 
 **Fix:** Verify Redis is running and the connection string is correct. Check firewall rules and authentication.
+
+### `UseTLS scheme mismatch`
+
+**Message:** `broker: UseTLS is true but URL scheme is not redis:// or rediss://; provide a redis:// or rediss:// URL`
+
+**Cause:** `WithTLS(true)` was set but the URL uses a non-standard scheme (e.g. bare hostname, `unix://`). Crank cannot safely upgrade the connection to TLS without a recognized scheme.
+
+**Fix:** Use a `redis://` or `rediss://` URL. For TLS, `rediss://` is preferred.
 
 ---
 
@@ -172,9 +180,25 @@ engine.Register("MyWorker", MyWorker{})
 
 **Message:** `failed to enqueue job: <details>`
 
-**Cause:** The broker rejected the enqueue operation. The wrapped error has specifics — typically a Redis connection error or a closed broker.
+**Cause:** The broker rejected the enqueue operation. The wrapped error has specifics — typically a Redis connection error, a closed broker, or a validation failure.
 
-**Fix:** Check that the broker is running and the connection is healthy.
+**Fix:** Check that the broker is running and the connection is healthy. If the error wraps a validation message, see the validation errors section below.
+
+### `invalid queue name`
+
+**Message:** `failed to enqueue job: invalid queue name "...": must match [A-Za-z0-9_-]{1,128}`
+
+**Cause:** The queue name contains invalid characters, is empty, or exceeds 128 characters. Queue names are validated at enqueue time.
+
+**Fix:** Use only alphanumeric characters, underscores, and hyphens. Keep the name under 128 characters.
+
+### `worker class must not be empty`
+
+**Message:** `failed to enqueue job: worker class must not be empty`
+
+**Cause:** An empty string was passed as the worker class name.
+
+**Fix:** Provide a non-empty worker class name that matches a registered worker.
 
 ### `global client not initialized`
 
@@ -245,12 +269,27 @@ crank.SetValidator(crank.ClassAllowlist(map[string]bool{
 
 **Message:** `job payload size 2048 exceeds max 1024 bytes`
 
-**Cause:** The serialized job exceeds the `MaxPayloadSize` limit.
+**Cause:** The serialized job exceeds the `MaxPayloadSize` limit. For dequeued jobs, the original broker bytes are measured to avoid re-serialization artifacts.
 
 **Fix:** Reduce the size of job arguments, or increase the limit:
 
 ```go
-crank.SetValidator(crank.MaxPayloadSize(4096))
+engine.SetValidator(crank.MaxPayloadSize(4096))
+```
+
+### `job metadata size exceeds max`
+
+**Message:** `job metadata size 1024 exceeds max 512 bytes`
+
+**Cause:** The serialized `Metadata` field exceeds the `MaxMetadataSize` limit.
+
+**Fix:** Reduce the metadata size, or increase the limit:
+
+```go
+engine.SetValidator(crank.ChainValidator{
+    crank.MaxPayloadSize(4096),
+    crank.MaxMetadataSize(1024),
+})
 ```
 
 ---
@@ -265,10 +304,10 @@ crank.SetValidator(crank.MaxPayloadSize(4096))
 
 **Fix:** This is expected behavior. The circuit breaker will automatically transition to half-open after the reset timeout and allow a probe job through. If the probe succeeds, the circuit closes. Fix the underlying cause of worker failures to prevent the circuit from opening.
 
-### `panic: <details>`
+### `panic in job`
 
-**Message:** `panic: <value>`
+**Message:** `panic in job <jid> [<class>]: recovered (see logs for stack trace)`
 
-**Cause:** A worker panicked during execution. `RecoveryMiddleware` caught the panic and converted it to an error.
+**Cause:** A worker panicked during execution. `RecoveryMiddleware` caught the panic and converted it to an error. The raw panic value is not included in the error message to prevent leaking sensitive data — check the structured logs for a truncated stack trace.
 
 **Fix:** Fix the panic in your worker code. The job will follow the normal retry/dead-letter path.
