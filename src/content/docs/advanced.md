@@ -25,12 +25,11 @@ crank.ClassAllowlist(map[string]bool{          // whitelist job classes
 })
 crank.ClassPattern(regexp.MustCompile(`^[A-Za-z]+Worker$`))  // regex pattern
 crank.MaxPayloadSize(1024)                     // max serialized job size in bytes
-crank.MaxMetadataSize(512)                     // max serialized metadata size in bytes
 crank.SafeClassPattern()                       // convenience: ^[A-Za-z0-9_]+$
 crank.ValidateQueueName("my-queue")            // validate queue name format
 ```
 
-`MaxPayloadSize` uses the original broker bytes (`RawPayload`) when available to avoid re-serialization artifacts. `MaxMetadataSize` is a separate check to prevent jobs with small args but oversized metadata from bypassing payload limits.
+`MaxPayloadSize` uses the original broker bytes (`RawPayload`) when available to avoid re-serialization artifacts that change byte length during JSON round-tripping.
 
 ### Queue Name Validation
 
@@ -45,7 +44,6 @@ validators := crank.ChainValidator{
     crank.MaxArgsCount(5),
     crank.SafeClassPattern(),
     crank.MaxPayloadSize(4096),
-    crank.MaxMetadataSize(512),
 }
 engine.SetValidator(validators)
 ```
@@ -210,6 +208,66 @@ fmt.Printf("Retry: %d\n", stats.Retry)
 fmt.Printf("Dead: %d\n", stats.Dead)
 fmt.Printf("Queue sizes: %v\n", stats.Queues)
 ```
+
+---
+
+## Health Checks
+
+`engine.Health(ctx)` returns a cheap snapshot of whether the engine is running and whether the broker is reachable. It's intended for liveness/readiness probes, supervisor loops, and `/healthz`-style HTTP endpoints. The broker ping is bounded by the supplied context — always pass a short deadline.
+
+```go
+ctx, cancel := context.WithTimeout(r.Context(), 500*time.Millisecond)
+defer cancel()
+
+h := engine.Health(ctx)
+if h.Status != crank.HealthOK {
+    log.Printf("crank unhealthy: %v", h.Errors)
+}
+```
+
+### HealthStatus
+
+```go
+type HealthStatus struct {
+    Status            string        // "ok" | "down"
+    EngineStarted     bool
+    BrokerReachable   bool
+    BrokerLatency     time.Duration // duration of the broker ping
+    WorkersRegistered int
+    Queues            []string      // configured queue names (deduplicated)
+    CheckedAt         time.Time
+    Errors            []string      // reasons when Status is not "ok"
+}
+```
+
+Status is `crank.HealthOK` only when the engine has been started **and** the broker responded to a ping; otherwise `crank.HealthDown` with a human-readable reason in `Errors`.
+
+### HTTP Probe Example
+
+`Health` returns a struct, not a handler — wire it into your own router so you control the response shape and status codes:
+
+```go
+mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+    ctx, cancel := context.WithTimeout(r.Context(), 500*time.Millisecond)
+    defer cancel()
+
+    h := engine.Health(ctx)
+    if h.Status != crank.HealthOK {
+        w.WriteHeader(http.StatusServiceUnavailable)
+    }
+    _ = json.NewEncoder(w).Encode(h)
+})
+```
+
+### What Health does not check
+
+To stay cheap, `Health` deliberately skips anything that would scan the broker:
+
+- It does **not** call `Stats()` or count queue depth.
+- It does **not** verify worker liveness (a stuck worker goroutine will not flip status to `down`).
+- It does **not** track time since the last successful poll.
+
+Use `engine.Stats()` and your metrics handler for those signals.
 
 ---
 
